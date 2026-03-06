@@ -3,8 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Only protect /admin routes, not /admin/login
-  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
+  // Protect /admin routes (UI and API), but not /admin/login
+  const isAdminApi = pathname.startsWith("/api/admin/articles");
+  const isAdminUi = pathname.startsWith("/admin") && !pathname.startsWith("/admin/login");
+  if (isAdminUi || isAdminApi) {
     const token = req.cookies.get("admin_token")?.value;
     if (token !== process.env.ADMIN_PASSWORD) {
       const loginUrl = req.nextUrl.clone();
@@ -17,5 +19,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/articles/:path*"],
 };
