@@ -36,11 +36,7 @@ export default function ArticleEditor({ paper, isNew }: Props) {
     setSaving(true);
     setError("");
 
-    const apiKey = process.env.NEXT_PUBLIC_ARTICLES_API_KEY;
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    };
+    const headers = { "Content-Type": "application/json" };
 
     const payload = {
       ...form,
@@ -53,8 +49,8 @@ export default function ArticleEditor({ paper, isNew }: Props) {
     };
 
     const res = isNew
-      ? await fetch("/api/articles", { method: "POST", headers, body: JSON.stringify(payload) })
-      : await fetch(`/api/articles/${paper!.slug}`, { method: "PUT", headers, body: JSON.stringify(payload) });
+      ? await fetch("/api/admin/articles", { method: "POST", headers, body: JSON.stringify(payload) })
+      : await fetch(`/api/admin/articles/${paper!.slug}`, { method: "PUT", headers, body: JSON.stringify(payload) });
 
     if (res.ok) {
       router.push("/admin");
@@ -70,10 +66,8 @@ export default function ArticleEditor({ paper, isNew }: Props) {
     if (!confirm(`Delete "${paper?.title}"? This cannot be undone.`)) return;
     setDeleting(true);
 
-    const apiKey = process.env.NEXT_PUBLIC_ARTICLES_API_KEY;
-    const res = await fetch(`/api/articles/${paper!.slug}`, {
+    const res = await fetch(`/api/admin/articles/${paper!.slug}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${apiKey}` },
     });
 
     if (res.ok) {
